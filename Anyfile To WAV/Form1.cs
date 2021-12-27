@@ -1,7 +1,12 @@
-﻿using System;
+﻿// This program is for educational purposes only
+// You may modify this program and/or distribute as you please
+// as long as it remains free.
+
+using System;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+
 
 namespace Anyfile_To_WAV
 {
@@ -44,13 +49,13 @@ namespace Anyfile_To_WAV
             else chan = 2;
             if (comboBox3.SelectedIndex == 0) bits = 8;
             else bits = 16;
-            short b = Convert.ToInt16(bits);
-            short c = Convert.ToInt16(chan);
-            short d = Convert.ToInt16(8);
+            short b = (short)(bits);
+            short c = (short)(chan);
+            short d = 8;
             openFileDialog1.ShowDialog();
             string sfile = openFileDialog1.FileName;
             string filename = Path.GetFileNameWithoutExtension(sfile) + ".wav";
-            // Check if slected file actually exists. (not sure if this is really needed since the file is selected from the OpenFileDialog)
+            // Check if slected file actually exists. (not sure if this is needed since the file is selected from the OpenFileDialog)
             if (File.Exists(sfile))
             {
                 long size = new System.IO.FileInfo(sfile).Length; // sets variable 'size' to equal size of source file
@@ -59,18 +64,18 @@ namespace Anyfile_To_WAV
                     //      Start Conversion
                     this.Text = "Converting to WAV...";
                     //      Construct WAV file header 
-                    byte[] riff = Encoding.ASCII.GetBytes("RIFF");      // 1-4
-                    uint len = Convert.ToUInt32(size) + 44;             // 5-8
-                    byte[] wave = Encoding.ASCII.GetBytes("WAVEfmt ");  // 9-16
-                    int st1 = 16;                                       // 17-20
-                    short st2 = 1;                                      // 21-22
-                                                                        // 23-24 (assigned to short 'c' from int 'chan')
-                                                                        // 25-28 (assigned to 'rate')
-                    int sr = (rate * bits * chan) / 8;                  // 29-32 (sample rate * Bits * channels) /8
-                    short sr2 = (short)(b * c / d);                     // 33-34 (bits * channels) /8
-                                                                        // 35-36 (assigned to short 'b' from int 'bits')
-                    byte[] dat = Encoding.ASCII.GetBytes("data");       // 37-40
-                    uint dlen = Convert.ToUInt32(size);                 // 41-44
+                    byte[] riff = Encoding.ASCII.GetBytes("RIFF");      // 1-4   ASCIII data 'RIFF'
+                    uint len = (uint)(size) + 44;                       // 5-8   (uint) value equals size of entire file (data + header)
+                    byte[] wave = Encoding.ASCII.GetBytes("WAVEfmt ");  // 9-16  ASCII data 'WAVEfmt ' <-- with null space
+                    int st1 = 16;                                       // 17-20 (int) Length of format data 
+                    short st2 = 1;                                      // 21-22 (short) Type of data. 1= PCM, 2= byte integer
+                                                                        // 23-24 (short) Number of channels (assigned to short 'c' from int 'chan')
+                                                                        // 25-28 (int) sample rate (assigned to 'rate')
+                    int sr = (rate * bits * chan) / 8;                  // 29-32 (int) (sample rate * Bits * channels) /8
+                    short sr2 = (short)(b * c / d);                     // 33-34 (short) (bits * channels) /8
+                                                                        // 35-36 (short) (assigned to short 'b' from int 'bits')
+                    byte[] dat = Encoding.ASCII.GetBytes("data");       // 37-40 ASCII data 'data'
+                    uint dlen = (uint)(size);                           // 41-44 (uint) size of data chunk (the actual wave data) 
                     
                     //      Build WAV file
                     var buffer = new MemoryStream();                    // Configure variable as memory buffer
@@ -100,10 +105,10 @@ namespace Anyfile_To_WAV
                     FileStream Dest = new(dpath + @"\" + filename, FileMode.Append);  // Open Destination file for append
                     
                     // Construct file in 1mb blocks until completed
-                    uint W = (uint)(dlen / MB);  // sets variable W to equal # of times file can be broken into 1mb sections
                     try
                     {
-                        for (uint i = 0; i <= W; i++)
+                        uint W = (uint)(dlen / MB);                      // sets variable W to equal # of times file can be broken into 1mb sections
+                        for (uint i = 0; i <= W; i++)                    // for loop to process file read/write from start to finish
                         {
                             if (i == W) { MB = (int)(dlen - (W * MB)); } // sets variable 'MB' to equal the remainder of the source file when/if < 1MB
                             byte[] buff = new byte[MB];                  // sets variable 'buff' array size to the value of 'MB'
