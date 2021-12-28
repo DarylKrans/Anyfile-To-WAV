@@ -12,7 +12,7 @@ namespace Anyfile_To_WAV
 {
     public partial class Form1 : Form
     {
-        int MB = 1024 * 1024;
+        const int MB = 1024 * 1024;
         readonly string dpath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); // Output path for WAV file (currently the user desktop)
         int rate = 0;
         short chan = 0;
@@ -107,13 +107,14 @@ namespace Anyfile_To_WAV
                     // Construct file in 1mb blocks until completed
                     try
                     {
+                        int length = MB;
                         uint W = (uint)(dlen / MB);                      // sets variable W to equal # of times file can be broken into 1mb sections
                         for (uint i = 0; i <= W; i++)                    // for loop to process file read/write from start to finish
                         {
-                            if (i == W) { MB = (int)(dlen - (W * MB)); } // sets variable 'MB' to equal the remainder of the source file when/if < 1MB
-                            byte[] buff = new byte[MB];                  // sets variable 'buff' array size to the value of 'MB'
+                            if (i == W) { length = (int)(dlen - (W * MB)); } // sets variable 'MB' to equal the remainder of the source file when/if < 1MB
+                            byte[] buff = new byte[length];                  // sets variable 'buff' array size to the value of 'MB'
                             Stream.Seek(i * MB, SeekOrigin.Begin);       // seeks file location in source file
-                            Stream.Read(buff, 0, MB);                    // reads data into variable 'buff'
+                            Stream.Read(buff, 0, length);                    // reads data into variable 'buff'
                             Dest.Write(buff, 0, buff.Length);            // writes data from 'buff' to the end of the destionation file (appends) 
                         }
                         Stream.Close();
