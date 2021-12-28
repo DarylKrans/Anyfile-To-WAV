@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-
+using System.Threading.Tasks;
 
 namespace Anyfile_To_WAV
 {
@@ -17,7 +17,7 @@ namespace Anyfile_To_WAV
         int rate = 0;
         short chan = 0;
         short bits = 0;
-
+        
         public Form1()
         {
             InitializeComponent();
@@ -64,7 +64,7 @@ namespace Anyfile_To_WAV
                     //      Start Conversion
                     this.Text = "Converting to WAV...";
                     //      Construct WAV file header 
-                    byte[] riff = Encoding.ASCII.GetBytes("RIFF");      // 1-4   ASCIII data 'RIFF'
+                    byte[] riff = Encoding.ASCII.GetBytes("RIFF");      // 1-4   ASCII data 'RIFF'
                     uint len = (uint)(size) + 44;                       // 5-8   (uint) value equals size of entire file (data + header)
                     byte[] wave = Encoding.ASCII.GetBytes("WAVEfmt ");  // 9-16  ASCII data 'WAVEfmt ' <-- with null space
                     int st1 = 16;                                       // 17-20 (int) Length of format data 
@@ -107,6 +107,7 @@ namespace Anyfile_To_WAV
                     // Construct file in 1mb blocks until completed
                     try
                     {
+                        label5.Visible = true;
                         int length = MB;
                         uint W = (uint)(dlen / MB);                      // sets variable W to equal # of times file can be broken into 1mb sections
                         for (uint i = 0; i <= W; i++)                    // for loop to process file read/write from start to finish
@@ -116,14 +117,23 @@ namespace Anyfile_To_WAV
                             Stream.Seek(i * MB, SeekOrigin.Begin);       // seeks file location in source file
                             Stream.Read(buff, 0, length);                    // reads data into variable 'buff'
                             Dest.Write(buff, 0, buff.Length);            // writes data from 'buff' to the end of the destionation file (appends) 
+                            label5.Text = "Progress : " + (i * MB).ToString("N0") + " of " + size.ToString("N0");
+                            label5.Refresh();
                         }
                         Stream.Close();
                         Dest.Close();
+                        label5.Text = "";
                     }
                     catch { }
+                    this.Text = "Anyfile to WAV";
                 }
                 else this.Text = "File exceeds 4gb limit!";
             }
+        }
+
+        private void Label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
