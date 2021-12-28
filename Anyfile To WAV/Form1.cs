@@ -66,7 +66,7 @@ namespace Anyfile_To_WAV
                     int st1 = 16;                                            // 17-20 (int) Length of format data 
                     short st2 = 1;                                           // 21-22 (short) Type of data. 1= PCM, 2= byte integer
                     short c = (short)(chan);                                 // 23-24 (short) Number of channels
-                    int rate = int.Parse(comboBox1.SelectedItem.ToString()); // 25-28 (int) sample rate
+                    int rate = int.Parse(comboBox1.SelectedText.ToString()); // 25-28 (int) sample rate
                     int sr = (rate * bits * chan) / 8;                       // 29-32 (int) (sample rate * Bits * channels) /8
                     short sr2 = (short)(bits * c / d);                       // 33-34 (short) (bits * channels) /8
                     short b = (short)(bits);                                 // 35-36 (short) bits per channel
