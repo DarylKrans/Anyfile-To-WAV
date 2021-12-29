@@ -16,16 +16,16 @@ namespace Anyfile_To_WAV
         readonly string dpath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); // Output path for WAV file (currently the user desktop)
         short chan = 0;
         short bits = 0;
-        
         public Form1()
         {
             InitializeComponent();
+            int sr = 11025;
             // Fill comboboxes with selection choices
-            string[] srate = new string[10];
+            string[] srate = new string[6];
             srate[0] = "8000";
-            srate[9] = "96000";
-            for (int i = 1; i < srate.Length - 1; i++)
-            { srate[i] = (i * 11025).ToString(); }
+            srate[5] = "96000";
+            for (int i = 1; i < 5 ; i++)
+            { srate[i] = sr.ToString(); sr += sr; }
             comboBox1.DataSource = srate;
             comboBox1.SelectedIndex = 4;
             string[] chnl = new string[2];
@@ -103,7 +103,6 @@ namespace Anyfile_To_WAV
                     // Construct file in 1mb blocks until completed
                     try
                     {
-                        label5.Visible = true;
                         int length = MB;
                         uint W = (uint)(dlen / MB);                          // sets variable W to equal # of times file can be broken into 1mb sections
                         for (uint i = 0; i <= W; i++)                        // for loop to process file read/write from start to finish
