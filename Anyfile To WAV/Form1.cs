@@ -14,6 +14,7 @@ namespace Anyfile_To_WAV
     {
         const int MB = 1024 * 1024;
         readonly string dpath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); // Output path for WAV file (currently the user desktop)
+        //readonly string dpath = @"C:\Users\Daryl\Desktop";
         short chan = 0;
         short bits = 0;
         public Form1()
@@ -27,7 +28,7 @@ namespace Anyfile_To_WAV
             for (int i = 1; i < 5 ; i++)
             { srate[i] = sr.ToString(); sr += sr; }
             comboBox1.DataSource = srate;
-            comboBox1.SelectedIndex = 4;
+            comboBox1.SelectedIndex = 3;
             string[] chnl = new string[2];
             chnl[0] = "Mono";
             chnl[1] = "Stereo";
@@ -66,7 +67,7 @@ namespace Anyfile_To_WAV
                     int st1 = 16;                                            // 17-20 (int) Length of format data 
                     short st2 = 1;                                           // 21-22 (short) Type of data. 1= PCM, 2= byte integer
                     short c = (short)(chan);                                 // 23-24 (short) Number of channels
-                    int rate = int.Parse(comboBox1.SelectedText.ToString()); // 25-28 (int) sample rate
+                    int rate = Int32.Parse(comboBox1.Text);                  // 25-28 (int) sample rate
                     int sr = (rate * bits * chan) / 8;                       // 29-32 (int) (sample rate * Bits * channels) /8
                     short sr2 = (short)(bits * c / d);                       // 33-34 (short) (bits * channels) /8
                     short b = (short)(bits);                                 // 35-36 (short) bits per channel
